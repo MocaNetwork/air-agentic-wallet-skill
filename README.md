@@ -27,6 +27,14 @@ The skill helps an external agent operate AIR agentic wallets by:
 - requesting wallet signatures from AIR's `POST /v2/wallet/agent-sign` endpoint
 - preparing and submitting ERC-4337 UserOps for common wallet actions
 
+## Testing and support
+
+We have tested this skill on Base Sepolia (`84532`) only.
+
+Supported networks are AIR-supported EVM chains that also have public Candide EIP-4337 bundler coverage.
+
+For detailed coverage, support boundaries, and validated harness/model information, see [`TESTING_AND_SUPPORT.md`](./TESTING_AND_SUPPORT.md).
+
 ## Repo structure
 
 ```text
