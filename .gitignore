@@ -1,0 +1,36 @@
+# ---- OS / editor noise ----
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ---- Logs / runtime ----
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---- Node / package manager ----
+node_modules/
+.npm/
+.pnpm-store/
+
+# ---- Build / coverage caches ----
+dist/
+build/
+coverage/
+.cache/
+.turbo/
+
+# ---- Environment / local secrets ----
+.env
+.env.*
+!.env.example
+
+# ---- AIR wallet local runtime artifacts ----
+.air-wallet-config.json
+p256-private-key.pem
+p256-public-key.pem
+typed-data.json
+
