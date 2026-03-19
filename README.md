@@ -46,7 +46,24 @@ skills/
 
 ## Local files
 
-The bundled scripts support reading local runtime configuration from `.air-wallet-config.json` and local PEM key files such as `p256-private-key.pem` and `p256-public-key.pem`. Those files are intentionally ignored by git.
+The bundled scripts resolve key paths from CLI flags, environment variables, or `.air-wallet-config.json`, and read PEM keys from those paths (commonly `p256-private-key.pem` and `p256-public-key.pem` in the working directory). Local key and config files are intentionally ignored by git.
+
+Generate the P-256 key pair (run in your working directory):
+
+```bash
+# Generate a P-256 (secp256r1 / prime256v1) private key
+openssl ecparam -name prime256v1 -genkey -noout -out p256-private-key.pem
+
+# Derive the matching public key
+openssl ec -in p256-private-key.pem -pubout -out p256-public-key.pem
+```
+
+Optional check:
+
+```bash
+openssl ec -in p256-private-key.pem -text -noout
+openssl ec -pubin -in p256-public-key.pem -text -noout
+```
 
 ## Notes
 
