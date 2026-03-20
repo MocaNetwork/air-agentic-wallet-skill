@@ -42,6 +42,7 @@ Optional:
   --public-key         Path to agent public key PEM
   --user-id            Override AIR userId
   --wallet-id          Override AIR walletId
+  --privy-app-id       Override AIR Privy app id
   --account-address    Override abstractAccountAddress
   --agent-sign-url     Override full AIR /v2/wallet/agent-sign URL
   --rpc-url            Override chain RPC URL

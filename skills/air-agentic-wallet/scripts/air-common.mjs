@@ -17,7 +17,6 @@ import {
   getUserOperationHash,
 } from 'viem/account-abstraction';
 
-export const AIR_PRIVY_APP_ID = 'cmc8tqdly0021l70mkooukbz4';
 export const AIR_ENTRYPOINT_VERSION = '0.7';
 export const AIR_ENTRYPOINT_ADDRESS = entryPoint07Address;
 export const LEGACY_BICONOMY_K1_VALIDATOR =
@@ -153,6 +152,11 @@ export async function loadAirContext(args = {}) {
     userId: args['user-id'] ?? process.env.AIR_USER_ID ?? fileConfig.userId,
     walletId:
       args['wallet-id'] ?? process.env.AIR_WALLET_ID ?? fileConfig.walletId,
+    privyAppId:
+      args['privy-app-id'] ??
+      process.env.AIR_PRIVY_APP_ID ??
+      process.env.PRIVY_APP_ID ??
+      fileConfig.privyAppId,
     abstractAccountAddress:
       args['account-address'] ??
       process.env.AIR_ACCOUNT_ADDRESS ??
@@ -187,9 +191,14 @@ export async function loadAirContext(args = {}) {
       fileConfig.publicKeyPath,
   };
 
-  if (!merged.userId || !merged.walletId || !merged.airApiAgentSignUrl) {
+  if (
+    !merged.userId ||
+    !merged.walletId ||
+    !merged.privyAppId ||
+    !merged.airApiAgentSignUrl
+  ) {
     throw new Error(
-      'Missing AIR context. Provide userId, walletId, and airApiAgentSignUrl via .air-wallet-config.json, env, or CLI flags.',
+      'Missing AIR context. Provide userId, walletId, privyAppId, and airApiAgentSignUrl via .air-wallet-config.json, env, or CLI flags.',
     );
   }
 
@@ -348,7 +357,7 @@ export function buildAgentSignRequest({ context, keys, method, payload }) {
     url: rpcUrl,
     body: rpcBody,
     headers: {
-      'privy-app-id': AIR_PRIVY_APP_ID,
+      'privy-app-id': context.privyAppId,
     },
   };
 
