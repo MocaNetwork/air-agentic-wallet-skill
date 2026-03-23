@@ -1,35 +1,68 @@
-# AIR Agentic Wallet Skill
+# AIR Agentic Skills
 
-This repository packages the `air-agentic-wallet` Cursor skill so users can install it with:
+This repository packages reusable agent skills so users can install them with:
 
 ```bash
 npx skills add <owner/repo>
 ```
+
+Both skills are installed together.
 
 ## What this repo contains
 
-- `skills/air-agentic-wallet/SKILL.md`: the skill instructions Cursor reads
-- `skills/air-agentic-wallet/scripts/*.mjs`: reusable helper scripts for signing, balances, transfers, approvals, NFT transfers, and arbitrary execution
+### 1. `air-agentic-wallet`
+
+- `skills/air-agentic-wallet/SKILL.md`: skill instructions for operating AIR agentic wallets
+- `skills/air-agentic-wallet/scripts/*.mjs`: helper scripts for signing, balances, transfers, approvals, NFT transfers, and arbitrary execution
+
+### 2. `moca-credential-verifier` (Beta)
+
+- `skills/moca-credential-verifier/SKILL.md`: skill instructions for Moca chain credential verification
+- `skills/moca-credential-verifier/scripts/*.mjs`: helper scripts for scoped sessions, program listing, credential verification in query_match mode, program completion with checksum, optional status polling, and MoCat progression
 
 ## Install
 
-After publishing this repository, install it from Cursor with:
+After publishing this repository, install it with:
 
 ```bash
 npx skills add <owner/repo>
 ```
 
-## Skill purpose
+## Skill purposes
 
-The skill helps an external agent operate AIR agentic wallets by:
+**air-agentic-wallet** helps an external agent operate AIR agentic wallets by:
 
 - generating fresh AIR auth payloads
 - requesting wallet signatures from AIR's `POST /v2/wallet/agent-sign` endpoint
 - preparing and submitting ERC-4337 UserOps for common wallet actions
 
+**moca-credential-verifier (Beta)** helps an external agent verify credentials on Moca chain by:
+
+- creating scoped AIR sessions for credential verification
+- listing and browsing available verification programs
+- triggering credential verification via `moca-chain-api /credentials/verify-by-agent` in `query_match` mode
+- submitting completion payload to `moca-proof-api /mocaproof/complete`
+- auto-trying higher-to-lower tiers until first compliant tier succeeds
+- displaying MoCat progression (with optional VP status polling for diagnostics)
+
+Staging defaults:
+
+| Service | URL |
+|---------|-----|
+| AIR API | `https://air.api.staging.air3.com/v2` |
+| Moca Chain API | `https://api.staging.mocachain.org/v1` |
+| VP API | `https://vp.api.staging.moca.network/v1` |
+| Moca Proof API | `https://proof.api.staging.moca.network/v1` |
+
+Beta status: currently configured for staging endpoints.
+
+Default `partnerId` for `moca-credential-verifier`:
+
+- `7e9becac-db0d-4d52-980e-984bb70c4d30`
+
 ## Testing and support
 
-We have tested this skill on Base Sepolia (`84532`) only.
+We have tested the wallet skill on Base Sepolia (`84532`) only.
 
 Supported networks are AIR-supported EVM chains that also have public Candide EIP-4337 bundler coverage.
 
@@ -50,6 +83,17 @@ skills/
       air-approve.mjs
       air-nft-transfer.mjs
       air-execute.mjs
+  moca-credential-verifier/
+    SKILL.md
+    scripts/
+      moca-common.mjs
+      moca-create-session.mjs
+      moca-list-programs.mjs
+      moca-verify-by-agent.mjs
+      moca-complete-program.mjs
+      moca-poll-status.mjs
+      moca-get-mocat.mjs
+      moca-verify-flow.mjs
 ```
 
 ## Local files
