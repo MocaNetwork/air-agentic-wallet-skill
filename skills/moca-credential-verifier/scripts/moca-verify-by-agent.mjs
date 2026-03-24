@@ -20,6 +20,7 @@ Required:
   --program-id         Verification program ID to verify against
 
 Optional:
+  --issue-url          Issuance URL to display when no credential is found
   --response-mode      Response mode: zkp | selective_disclosure | query_match (default: query_match)
   --disclose-fields    Comma-separated fields for selective_disclosure mode
   --include-zkp        Include ZKP proofs in selective_disclosure mode (true/false)
@@ -87,9 +88,14 @@ async function main() {
     case 'processing':
       console.log('Verification accepted, processing on-chain...');
       break;
-    case 'no_vc':
+    case 'no_vc': {
       console.log('No credential found for this program.');
+      const issueUrl = args['issue-url'];
+      if (issueUrl) {
+        console.log(`Issue your credential here: ${issueUrl}`);
+      }
       break;
+    }
     default:
       if (result.normalized.startsWith('status_bucket:')) {
         console.log(`Verification returned status: ${result.status}`);

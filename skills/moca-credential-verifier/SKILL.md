@@ -120,8 +120,10 @@ The list output includes numeric options in this format:
 ### Step 3: Trigger Verification (query_match mode)
 
 ```bash
-node scripts/moca-verify-by-agent.mjs --access-token <token> --program-id <programId>
+node scripts/moca-verify-by-agent.mjs --access-token <token> --program-id <programId> --issue-url <issueUrl>
 ```
+
+Always pass `--issue-url` with the `issueUrl` from the selected program's listing output. When verification returns `no_vc`, the script prints the issuance link so the user can obtain the credential.
 
 Calls `POST {mocaChainApiUrl}/credentials/verify-by-agent` with:
 - `programId` in the body
