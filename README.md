@@ -6,7 +6,7 @@ This repository packages reusable agent skills so users can install them with:
 npx skills add <owner/repo>
 ```
 
-Both skills are installed together.
+All skills are installed together.
 
 ## What this repo contains
 
@@ -18,7 +18,12 @@ Both skills are installed together.
 ### 2. `moca-credential-verifier` (Beta)
 
 - `skills/moca-credential-verifier/SKILL.md`: skill instructions for Moca chain credential verification
-- `skills/moca-credential-verifier/scripts/*.mjs`: helper scripts for scoped sessions, program listing, credential verification in query_match mode, program completion with checksum, optional status polling, and MoCat progression
+- `skills/moca-credential-verifier/scripts/*.mjs`: helper scripts for scoped sessions, program listing, credential verification in query_match mode, and optional status polling
+
+### 3. `moca-proof` (Beta)
+
+- `skills/moca-proof/SKILL.md`: skill instructions for program completion and MoCat progression
+- `skills/moca-proof/scripts/*.mjs`: helper scripts for completing verified programs with checksum and fetching MoCat status
 
 ## Install
 
@@ -41,9 +46,13 @@ npx skills add <owner/repo>
 - creating scoped AIR sessions for credential verification
 - listing and browsing available verification programs
 - triggering credential verification via `moca-chain-api /credentials/verify-by-agent` in `query_match` mode
+
+**moca-proof (Beta)** helps an external agent complete verified programs and track MoCat progression by:
+
 - submitting completion payload to `moca-proof-api /mocaproof/complete`
-- auto-trying higher-to-lower tiers until first compliant tier succeeds
-- displaying MoCat progression (with optional VP status polling for diagnostics)
+- fetching MoCat status and progression details
+
+After credential verification returns `compliant`, the agent uses `moca-proof` to complete the program and display MoCat progression.
 
 Staging defaults:
 
@@ -56,7 +65,7 @@ Staging defaults:
 
 Beta status: currently configured for staging endpoints.
 
-Default `partnerId` for `moca-credential-verifier`:
+Default `partnerId` for `moca-credential-verifier` and `moca-proof`:
 
 - `7e9becac-db0d-4d52-980e-984bb70c4d30`
 
@@ -90,10 +99,13 @@ skills/
       moca-create-session.mjs
       moca-list-programs.mjs
       moca-verify-by-agent.mjs
-      moca-complete-program.mjs
       moca-poll-status.mjs
+  moca-proof/
+    SKILL.md
+    scripts/
+      moca-common.mjs
+      moca-complete-program.mjs
       moca-get-mocat.mjs
-      moca-verify-flow.mjs
 ```
 
 ## Local files

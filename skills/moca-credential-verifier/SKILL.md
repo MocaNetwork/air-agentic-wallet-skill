@@ -1,13 +1,15 @@
 ---
 name: moca-credential-verifier
-description: Verifies user credentials on Moca chain testnet via AIR agent sessions. Use when a user wants to verify a credential, list available verification programs, check credential compliance, or see MoCat progression status.
+description: Verifies user credentials on Moca chain testnet via AIR agent sessions. Use when a user wants to verify a credential, list available verification programs, or check credential compliance.
 ---
 
 # Moca Credential Verifier
 
 ## Purpose
 
-This skill teaches an agent how to browse available verification programs, show numeric options, auto-try tiers from highest to lowest through `moca-chain-api` in **query_match mode**, submit completion to `moca-proof-api /mocaproof/complete`, and display MoCat progression.
+This skill teaches an agent how to browse available verification programs, show numeric options, and trigger credential verification through `moca-chain-api` in **query_match mode**.
+
+After receiving a `compliant` result, use the `moca-proof` skill to complete the program and fetch MoCat progression.
 
 This skill starts **after** the agent key already exists and the handoff bundle is available.
 
@@ -20,10 +22,7 @@ Task mapping:
 - create a scoped session -> `scripts/moca-create-session.mjs`
 - list/browse verification programs -> `scripts/moca-list-programs.mjs`
 - trigger credential verification (`query_match` mode) -> `scripts/moca-verify-by-agent.mjs`
-- complete program with checksum -> `scripts/moca-complete-program.mjs`
 - poll verification status -> `scripts/moca-poll-status.mjs`
-- fetch MoCat status -> `scripts/moca-get-mocat.mjs`
-- run the full end-to-end flow with automatic tier fallback -> `scripts/moca-verify-flow.mjs`
 
 Before first use, run `node <script> --help` to inspect supported parameters.
 
@@ -98,7 +97,7 @@ Calls `POST {airApiUrl}/auth/agent/session` with:
 
 Returns an `accessToken` used as Bearer token for all subsequent calls.
 
-### Step 2: List Verification Programs (No Token First)
+### Step 2: List Verification Programs
 
 ```bash
 node scripts/moca-list-programs.mjs
@@ -118,32 +117,7 @@ The list output includes numeric options in this format:
 - Option index: `[1]`, `[2]`, ...
 - Tier index inside option: `(1.1)`, `(1.2)`, ...
 
-### Step 3: Auto Tier Fallback Strategy
-
-For one-shot end-to-end flow, run:
-
-```bash
-node scripts/moca-verify-flow.mjs
-```
-
-Behavior:
-
-1. List options publicly first (no token)
-2. For each option, try top tier first
-3. If tier returns non-compliant/no-credential/other non-success bucket, try next tier
-4. On first compliant tier:
-   - create scoped session for that `programId`
-   - call verify-by-agent (`query_match`)
-   - call `/mocaproof/complete`
-   - call `/mocaproof/mocat`
-5. If all tiers across selected options fail, print `Sorry, not compliant`
-
-Optional scoping:
-
-- `--option-index <n>`: only try one listed option
-- `--program-id <id>`: only try one exact program ID
-
-### Step 4: Trigger Verification (query_match mode)
+### Step 3: Trigger Verification (query_match mode)
 
 ```bash
 node scripts/moca-verify-by-agent.mjs --access-token <token> --program-id <programId>
@@ -156,34 +130,6 @@ Calls `POST {mocaChainApiUrl}/credentials/verify-by-agent` with:
 
 The response is normalized using the rules below.
 
-### Step 5: Complete Program with Checksum
-
-```bash
-node scripts/moca-complete-program.mjs --access-token <token> --program-id <programId>
-```
-
-Calls `POST {mocaProofApiUrl}/mocaproof/complete` with:
-
-- `programId`
-- `txHash`
-- `zkp`
-- `checksum`
-
-Checksum logic:
-
-```text
-input = userId + "." + programId + "." + txHash.toLowerCase() + "." + SALT_KEY
-checksum = base64(md5(input) as hex-string bytes)
-```
-
-### Step 6: Fetch MoCat Status
-
-```bash
-node scripts/moca-get-mocat.mjs --access-token <token>
-```
-
-Calls `GET {mocaProofApiUrl}/mocaproof/mocat` with Bearer token to display cat progression.
-
 ### Optional: Poll VP Status
 
 ```bash
@@ -191,6 +137,15 @@ node scripts/moca-poll-status.mjs --access-token <token>
 ```
 
 Use this when you want to inspect status progression separately from the default flow.
+
+## After Verification Succeeds
+
+When verification returns `compliant`, use the **moca-proof** skill to:
+
+1. Complete the program via `moca-complete-program.mjs`
+2. Fetch MoCat progression via `moca-get-mocat.mjs`
+
+Pass the same `accessToken` and `programId` to the proof skill scripts.
 
 ## Verify Response Normalization
 
@@ -216,14 +171,10 @@ Known `status` values:
 
 ## Terminal Messaging
 
-When running the full flow (`moca-verify-flow.mjs`):
-
 - Print numeric options and tiers before verification attempts
-- Print `Verifying....` on each tier attempt
-- Auto-try next tier when a tier is non-compliant (or other non-success response bucket)
-- If every attempted tier fails, print `Sorry, not compliant` and end
+- Print `Verifying....` on each verification attempt
+- If non-compliant, print `Sorry, not compliant` and end
 - When verify succeeds in query_match mode: print `OK, verified, <verifier name> is processing your data`
-- Submit `/mocaproof/complete`, then print cat progression summary from `/mocaproof/mocat`
 
 ## Non-Negotiable Rules
 

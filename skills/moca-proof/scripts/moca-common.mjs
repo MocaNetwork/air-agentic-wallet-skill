@@ -116,7 +116,6 @@ export async function loadMocaContext(args = {}, opts = {}) {
       fileConfig.partnerId ??
       STAGING_DEFAULTS.partnerId,
 
-    // Endpoint URLs with staging fallbacks
     airApiUrl: ensureApiVersion(rawAirApiUrl, 'v2'),
     mocaChainApiUrl: ensureApiVersion(rawMocaChainApiUrl, 'v1'),
     vpApiUrl: ensureApiVersion(rawVpApiUrl, 'v1'),
@@ -234,62 +233,66 @@ export function bearerHeaders(accessToken) {
 }
 
 // ---------------------------------------------------------------------------
-// Verify-response normalizer
+// Moca proof completion helpers
 // ---------------------------------------------------------------------------
 
-const KNOWN_STATUS_NO_VC = ['NO_EXIST'];
+export const MOCAPROOF_CHECKSUM_SALT =
+  'fzUkU81NiVV4kJH6C9+szvEmQvL5o5VQbaZj6Q3jIrU=';
+export const DEFAULT_TX_HASH =
+  '0x0000000000000000000000000000000000000000000000000000000000000000';
+export const DEFAULT_QUERY_MATCH_ZKP =
+  '{"mode":"query_match","proof":"not_provided"}';
 
-export function normalizeVerifyResponse(raw) {
-  if (raw == null || typeof raw !== 'object') {
-    return { normalized: 'unknown_response', raw };
+export function buildMocaProofChecksum({
+  userId,
+  programId,
+  txHash = '',
+  saltKey = MOCAPROOF_CHECKSUM_SALT,
+}) {
+  const normalizedTxHash = String(txHash).toLowerCase();
+  const input = [userId, programId, normalizedTxHash, saltKey].join('.');
+  const md5str = crypto.createHash('md5').update(input, 'utf8').digest('hex');
+  return Buffer.from(md5str, 'utf8').toString('base64');
+}
+
+export function extractTxHashFromVerifyResponse(rawResponse) {
+  const candidates = [
+    rawResponse?.txHash,
+    rawResponse?.transactionHash,
+    rawResponse?.result?.txHash,
+    rawResponse?.result?.transactionHash,
+    rawResponse?.proofs?.[0]?.txHash,
+    rawResponse?.proofs?.[0]?.transactionHash,
+  ];
+  const txHash = candidates.find(
+    (value) => typeof value === 'string' && value.length > 0,
+  );
+  return txHash ?? DEFAULT_TX_HASH;
+}
+
+export function extractZkpStringFromVerifyResponse(rawResponse) {
+  if (!rawResponse || typeof rawResponse !== 'object') return undefined;
+  if (typeof rawResponse.zkp === 'string') return rawResponse.zkp;
+  if (Array.isArray(rawResponse.proofs) && rawResponse.proofs.length > 0) {
+    return JSON.stringify(rawResponse.proofs[0]);
   }
-
-  const { verified, status, code, reason } = raw;
-
-  if (verified === true) {
-    return { normalized: 'compliant', raw };
+  if (rawResponse.proofs !== undefined) {
+    return JSON.stringify(rawResponse.proofs);
   }
+  return undefined;
+}
 
-  if (verified === 'pending') {
-    return { normalized: 'processing', raw };
+export function ensureZkpLength(zkp, maxLength = 10_000) {
+  if (zkp === undefined) return undefined;
+  if (typeof zkp !== 'string') {
+    throw new Error('zkp must be a string when provided');
   }
-
-  if (verified === false) {
-    if (typeof reason === 'string') {
-      const normalizedReason = reason.toUpperCase();
-      if (normalizedReason === 'NO_CREDENTIAL') {
-        return { normalized: 'no_vc', reason: normalizedReason, raw };
-      }
-      if (normalizedReason === 'NOT_COMPLIANT') {
-        return {
-          normalized: 'non_compliant',
-          reason: normalizedReason,
-          raw,
-        };
-      }
-      return {
-        normalized: `status_bucket:${normalizedReason}`,
-        status: normalizedReason,
-        raw,
-      };
-    }
-
-    if (status && KNOWN_STATUS_NO_VC.includes(status)) {
-      return { normalized: 'no_vc', status, raw };
-    }
-    if (status === 'NON_COMPLIANT') {
-      return { normalized: 'non_compliant', status, raw };
-    }
-    if (status) {
-      return { normalized: `status_bucket:${status}`, status, raw };
-    }
-    if (code) {
-      return { normalized: `unknown_failure_code:${code}`, code, raw };
-    }
-    return { normalized: 'unknown_response', raw };
+  if (zkp.length > maxLength) {
+    throw new Error(
+      `zkp payload exceeds ${maxLength} characters (actual: ${zkp.length})`,
+    );
   }
-
-  return { normalized: 'unknown_response', raw };
+  return zkp;
 }
 
 // ---------------------------------------------------------------------------

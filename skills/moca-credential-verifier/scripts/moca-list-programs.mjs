@@ -58,6 +58,12 @@ async function main() {
 
   console.log(`Mode: ${mode}`);
 
+  data.sort((a, b) => {
+    const catCmp = (a.category ?? '').localeCompare(b.category ?? '');
+    if (catCmp !== 0) return catCmp;
+    return (a.issuer?.name ?? '').localeCompare(b.issuer?.name ?? '');
+  });
+
   console.log(`\n--- Verification Programs (page ${pagination.page}/${Math.ceil(pagination.total / pagination.limit) || 1}, ${pagination.total} total) ---\n`);
 
   const numberedOptions = [];
