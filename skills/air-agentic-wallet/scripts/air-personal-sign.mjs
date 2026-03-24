@@ -8,6 +8,7 @@ import {
   parseArgs,
   printJson,
   signWithAir,
+  wrapNexusSignature,
 } from "./air-common.mjs";
 
 function printHelp() {
@@ -57,7 +58,7 @@ async function main() {
   printJson({
     method: "personal_sign",
     inputMessage: message,
-    signature: result.signature,
+    signature: wrapNexusSignature(result.signature),
     airApiAgentSignUrl: context.airApiAgentSignUrl,
   });
 }

@@ -336,7 +336,7 @@ curl -X POST "$AIR_API_AGENT_SIGN_URL" \
 }
 ```
 
-The returned value is the final wallet signature from AIR's wallet backend.
+The returned value is the final wallet signature ready for use.
 
 ## Off-Chain Workflow
 

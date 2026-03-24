@@ -9,6 +9,7 @@ import {
   parseArgs,
   printJson,
   signWithAir,
+  wrapNexusSignature,
 } from "./air-common.mjs";
 
 function printHelp() {
@@ -70,7 +71,7 @@ async function main() {
   printJson({
     method: "eth_signTypedData_v4",
     primaryType: typedData.primaryType ?? typedData.primary_type,
-    signature: result.signature,
+    signature: wrapNexusSignature(result.signature),
     airApiAgentSignUrl: context.airApiAgentSignUrl,
   });
 }

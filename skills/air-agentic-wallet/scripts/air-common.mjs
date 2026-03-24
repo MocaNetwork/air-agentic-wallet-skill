@@ -22,6 +22,8 @@ export const AIR_ENTRYPOINT_ADDRESS = entryPoint07Address;
 export const LEGACY_BICONOMY_K1_VALIDATOR =
   '0x0000002D6DB27c52E3C11c1Cf24072004AC75cBa';
 
+const NEXUS_VALIDATOR_ADDRESS = '0x0000002D6DB27c52E3C11c1Cf24072004AC75cBa';
+
 export const CHAIN_DEFAULTS = {
   84532: {
     name: 'Base Sepolia',
@@ -412,6 +414,14 @@ export async function signWithAir({ context, keys, method, payload }) {
     throw new Error(`AIR response missing signature: ${JSON.stringify(data)}`);
   }
   return { request, signature: data.signature };
+}
+
+/**
+ * Wrap a raw EOA signature for Nexus smart account verification.
+ * Prepends the K1 validator address to produce a valid Nexus signature.
+ */
+export function wrapNexusSignature(eoaSignature) {
+  return `0x${NEXUS_VALIDATOR_ADDRESS.slice(2)}${eoaSignature.slice(2)}`;
 }
 
 export async function jsonRpcCall(rpcUrl, method, params) {
