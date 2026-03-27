@@ -9,7 +9,7 @@ description: Verifies user credentials on Moca chain testnet via AIR agent sessi
 
 This skill teaches an agent how to browse available verification programs, show numeric options, and trigger credential verification through `moca-chain-api` in **query_match mode**.
 
-After receiving a `compliant` result, use the `moca-proof` skill to complete the program and fetch MoCat progression.
+After receiving a `compliant` result, install/use the standalone `moca-proof-skill` repository and run the `moca-proof` skill to complete the program and fetch MoCat progression.
 
 This skill starts **after** the agent key already exists and the handoff bundle is available.
 
@@ -37,22 +37,22 @@ Expect a handoff bundle equivalent to:
   "privyAppId": "...",
   "abstractAccountAddress": "0x...",
   "airApiAgentSignUrl": "https://.../v2/wallet/agent-sign",
-  "partnerId": "7e9becac-db0d-4d52-980e-984bb70c4d30"
+  "partnerId": "8ab60850-bdfa-4e48-8afa-d67a3d715224"
 }
 ```
 
 The agent must also already have access to its own P-256 private key.
-If `partnerId` is missing, scripts default to the staging partner ID above.
+If `partnerId` is missing, scripts default to the sandbox partner ID above.
 
-## Staging Defaults
+## Sandbox Defaults
 
 ```json
 {
-  "airApiUrl": "https://air.api.staging.air3.com/v2",
-  "mocaChainApiUrl": "https://api.staging.mocachain.org/v1",
-  "vpApiUrl": "https://vp.api.staging.moca.network/v1",
-  "mocaProofApiUrl": "https://proof.api.staging.moca.network/v1",
-  "partnerId": "7e9becac-db0d-4d52-980e-984bb70c4d30"
+  "airApiUrl": "https://air.api.sandbox.air3.com/v2",
+  "mocaChainApiUrl": "https://api.sandbox.mocachain.org/v1",
+  "vpApiUrl": "https://vp.api.sandbox.moca.network/v1",
+  "mocaProofApiUrl": "https://proof.api.sandbox.moca.network/v1",
+  "partnerId": "8ab60850-bdfa-4e48-8afa-d67a3d715224"
 }
 ```
 
@@ -66,11 +66,11 @@ Example additions for this skill:
 
 ```json
 {
-  "airApiUrl": "https://air.api.staging.air3.com/v2",
-  "mocaChainApiUrl": "https://api.staging.mocachain.org/v1",
-  "vpApiUrl": "https://vp.api.staging.moca.network/v1",
-  "mocaProofApiUrl": "https://proof.api.staging.moca.network/v1",
-  "partnerId": "7e9becac-db0d-4d52-980e-984bb70c4d30"
+  "airApiUrl": "https://air.api.sandbox.air3.com/v2",
+  "mocaChainApiUrl": "https://api.sandbox.mocachain.org/v1",
+  "vpApiUrl": "https://vp.api.sandbox.moca.network/v1",
+  "mocaProofApiUrl": "https://proof.api.sandbox.moca.network/v1",
+  "partnerId": "8ab60850-bdfa-4e48-8afa-d67a3d715224"
 }
 ```
 
@@ -81,7 +81,7 @@ All provided scripts resolve configuration in this order:
 1. CLI flags
 2. Environment variables
 3. `.air-wallet-config.json`
-4. Hardcoded staging defaults
+4. Hardcoded sandbox defaults
 
 ## Credential Verification Flow
 
@@ -142,7 +142,11 @@ Use this when you want to inspect status progression separately from the default
 
 ## After Verification Succeeds
 
-When verification returns `compliant`, use the **moca-proof** skill to:
+When verification returns `compliant`, use the **moca-proof** skill from the standalone `moca-proof-skill` repository to:
+
+```bash
+npx skills add MocaNetwork/moca-proof-skill
+```
 
 1. Complete the program via `moca-complete-program.mjs`
 2. Fetch MoCat progression via `moca-get-mocat.mjs`

@@ -27,7 +27,7 @@ Optional:
   --air-api-url        Override AIR API base URL
 
 Config fallback order:
-  CLI flags -> environment variables -> .air-wallet-config.json -> staging defaults
+  CLI flags -> environment variables -> .air-wallet-config.json -> sandbox defaults
 `);
 }
 

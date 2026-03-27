@@ -3,15 +3,15 @@ import fs from 'node:fs/promises';
 import process from 'node:process';
 
 // ---------------------------------------------------------------------------
-// Staging defaults
+// Sandbox defaults
 // ---------------------------------------------------------------------------
 
 export const STAGING_DEFAULTS = {
-  airApiUrl: 'https://air.api.staging.air3.com/v2',
-  mocaChainApiUrl: 'https://api.staging.mocachain.org/v1',
-  vpApiUrl: 'https://vp.api.staging.moca.network/v1',
-  mocaProofApiUrl: 'https://proof.api.staging.moca.network/v1',
-  partnerId: '7e9becac-db0d-4d52-980e-984bb70c4d30',
+  airApiUrl: 'https://air.api.sandbox.air3.com/v2',
+  mocaChainApiUrl: 'https://api.sandbox.mocachain.org/v1',
+  vpApiUrl: 'https://vp.api.sandbox.moca.network/v1',
+  mocaProofApiUrl: 'https://proof.api.sandbox.moca.network/v1',
+  partnerId: '8ab60850-bdfa-4e48-8afa-d67a3d715224',
 };
 
 const DEFAULT_CONFIG_PATH = '.air-wallet-config.json';
@@ -116,7 +116,7 @@ export async function loadMocaContext(args = {}, opts = {}) {
       fileConfig.partnerId ??
       STAGING_DEFAULTS.partnerId,
 
-    // Endpoint URLs with staging fallbacks
+    // Endpoint URLs with sandbox fallbacks
     airApiUrl: ensureApiVersion(rawAirApiUrl, 'v2'),
     mocaChainApiUrl: ensureApiVersion(rawMocaChainApiUrl, 'v1'),
     vpApiUrl: ensureApiVersion(rawVpApiUrl, 'v1'),

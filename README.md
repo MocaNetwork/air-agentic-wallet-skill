@@ -3,10 +3,10 @@
 This repository packages reusable agent skills so users can install them with:
 
 ```bash
-npx skills add <owner/repo>
+npx skills add MocaNetwork/air-agentic-wallet-skill
 ```
 
-All skills are installed together.
+Skills in this repository are installed together.
 
 ## What this repo contains
 
@@ -19,11 +19,6 @@ All skills are installed together.
 
 - `skills/moca-credential-verifier/SKILL.md`: skill instructions for Moca chain credential verification
 - `skills/moca-credential-verifier/scripts/*.mjs`: helper scripts for scoped sessions, program listing, credential verification in query_match mode, and optional status polling
-
-### 3. `moca-proof` (Beta)
-
-- `skills/moca-proof/SKILL.md`: skill instructions for program completion and MoCat progression
-- `skills/moca-proof/scripts/*.mjs`: helper scripts for completing verified programs with checksum and fetching MoCat status
 
 ## Install
 
@@ -47,27 +42,19 @@ npx skills add <owner/repo>
 - listing and browsing available verification programs
 - triggering credential verification via `moca-chain-api /credentials/verify-by-agent` in `query_match` mode
 
-**moca-proof (Beta)** helps an external agent complete verified programs and track MoCat progression by:
-
-- submitting completion payload to `moca-proof-api /mocaproof/complete`
-- fetching MoCat status and progression details
-
-After credential verification returns `compliant`, the agent uses `moca-proof` to complete the program and display MoCat progression.
-
-Staging defaults:
+Sandbox defaults:
 
 | Service | URL |
 |---------|-----|
-| AIR API | `https://air.api.staging.air3.com/v2` |
-| Moca Chain API | `https://api.staging.mocachain.org/v1` |
-| VP API | `https://vp.api.staging.moca.network/v1` |
-| Moca Proof API | `https://proof.api.staging.moca.network/v1` |
+| AIR API | `https://air.api.sandbox.air3.com/v2` |
+| Moca Chain API | `https://api.sandbox.mocachain.org/v1` |
+| VP API | `https://vp.api.sandbox.moca.network/v1` |
 
-Beta status: currently configured for staging endpoints.
+Beta status: currently configured for sandbox endpoints.
 
-Default `partnerId` for `moca-credential-verifier` and `moca-proof`:
+Default `partnerId` for `moca-credential-verifier`:
 
-- `7e9becac-db0d-4d52-980e-984bb70c4d30`
+- `8ab60850-bdfa-4e48-8afa-d67a3d715224`
 
 ## Testing and support
 
@@ -100,12 +87,6 @@ skills/
       moca-list-programs.mjs
       moca-verify-by-agent.mjs
       moca-poll-status.mjs
-  moca-proof/
-    SKILL.md
-    scripts/
-      moca-common.mjs
-      moca-complete-program.mjs
-      moca-get-mocat.mjs
 ```
 
 ## Local files

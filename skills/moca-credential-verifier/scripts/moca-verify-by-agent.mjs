@@ -28,7 +28,7 @@ Optional:
   --config             Path to .air-wallet-config.json
 
 Config fallback order:
-  CLI flags -> environment variables -> .air-wallet-config.json -> staging defaults
+  CLI flags -> environment variables -> .air-wallet-config.json -> sandbox defaults
 `);
 }
 
