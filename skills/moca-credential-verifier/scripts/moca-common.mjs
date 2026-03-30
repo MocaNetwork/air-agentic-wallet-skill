@@ -6,7 +6,7 @@ import process from 'node:process';
 // Sandbox defaults
 // ---------------------------------------------------------------------------
 
-export const STAGING_DEFAULTS = {
+export const SANDBOX_DEFAULTS = {
   airApiUrl: 'https://air.api.sandbox.air3.com/v2',
   mocaChainApiUrl: 'https://api.sandbox.mocachain.org/v1',
   vpApiUrl: 'https://vp.api.sandbox.moca.network/v1',
@@ -75,22 +75,22 @@ export async function loadMocaContext(args = {}, opts = {}) {
     args['air-api-url'] ??
     process.env.MOCA_AIR_API_URL ??
     fileConfig.airApiUrl ??
-    STAGING_DEFAULTS.airApiUrl;
+    SANDBOX_DEFAULTS.airApiUrl;
   const rawMocaChainApiUrl =
     args['chain-api-url'] ??
     process.env.MOCA_CHAIN_API_URL ??
     fileConfig.mocaChainApiUrl ??
-    STAGING_DEFAULTS.mocaChainApiUrl;
+    SANDBOX_DEFAULTS.mocaChainApiUrl;
   const rawVpApiUrl =
     args['vp-api-url'] ??
     process.env.MOCA_VP_API_URL ??
     fileConfig.vpApiUrl ??
-    STAGING_DEFAULTS.vpApiUrl;
+    SANDBOX_DEFAULTS.vpApiUrl;
   const rawMocaProofApiUrl =
     args['proof-api-url'] ??
     process.env.MOCA_PROOF_API_URL ??
     fileConfig.mocaProofApiUrl ??
-    STAGING_DEFAULTS.mocaProofApiUrl;
+    SANDBOX_DEFAULTS.mocaProofApiUrl;
 
   const merged = {
     ...fileConfig,
@@ -114,7 +114,7 @@ export async function loadMocaContext(args = {}, opts = {}) {
       args['partner-id'] ??
       process.env.MOCA_PARTNER_ID ??
       fileConfig.partnerId ??
-      STAGING_DEFAULTS.partnerId,
+      SANDBOX_DEFAULTS.partnerId,
 
     // Endpoint URLs with sandbox fallbacks
     airApiUrl: ensureApiVersion(rawAirApiUrl, 'v2'),
